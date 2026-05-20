@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Psychotechnique — Assistant Administratif Comptable</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1e2d7d;
+    --navy-light: #2a3a9a;
+    --gold: #00b5c8;
+    --gold-light: #33c8d8;
+    --cream: #f0f6f8;
+    --cream-dark: #dceef2;
+    --text: #1e2d7d;
+    --text-muted: #4a5a8a;
+    --white: #ffffff;
+    --success: #2d6a4f;
+    --error: #a33030;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.08);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.06);
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+  .header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+  }
+
+  /* TIMER */
+  .timer-bar {
+    background: var(--navy-light);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .timer-icon { font-size: 18px; }
+  .timer-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .timer-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .timer-value.warning { color: #e07b30; }
+  .timer-value.danger { color: #d44; animation: pulse 0.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: var(--cream-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: rgba(26,39,64,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* MAIN */
+  .main { max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 2.5rem 0 1rem;
+  }
+  .section-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--navy);
+    color: var(--gold);
+    padding: 4px 10px;
+    border-radius: 99px;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--cream-dark); }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--cream-dark);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .question-card:hover { box-shadow: 0 4px 20px rgba(26,39,64,0.06); }
+
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  .q-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    color: var(--gold);
+    background: var(--navy);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--navy);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .q-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 6px 10px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--cream-dark);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--cream);
+    user-select: none;
+  }
+  .option-label:hover { border-color: var(--navy); background: var(--white); }
+  .option-label input { display: none; }
+  .option-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--cream-dark);
+    flex-shrink: 0;
+    transition: all 0.15s;
+    background: var(--white);
+  }
+  .option-label:has(input:checked) {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: var(--white);
+  }
+  .option-label:has(input:checked) .option-dot {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* CORRECTION STATES */
+  .option-label.correct {
+    border-color: var(--success);
+    background: #eaf4ef;
+    color: var(--success);
+    font-weight: 500;
+  }
+  .option-label.correct .option-dot { background: var(--success); border-color: var(--success); }
+  .option-label.wrong {
+    border-color: var(--error);
+    background: #faeaea;
+    color: var(--error);
+  }
+  .option-label.wrong .option-dot { background: var(--error); border-color: var(--error); }
+  .option-label.disabled { pointer-events: none; }
+
+  /* SUBMIT */
+  .submit-wrap { text-align: center; margin-top: 2.5rem; }
+  .btn-submit {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .btn-submit:hover { background: var(--navy-light); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* RESULTS */
+  #results {
+    display: none;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    text-align: center;
+  }
+  .result-badge {
+    display: inline-block;
+    font-family: 'DM Serif Display', serif;
+    font-size: 4rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+  .result-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .result-stat {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+  }
+  .result-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--navy);
+  }
+  .result-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .result-bar-section { text-align: left; margin-bottom: 2rem; }
+  .rb-label { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .rb-bg { height: 8px; background: var(--cream-dark); border-radius: 99px; margin-bottom: 10px; overflow: hidden; }
+  .rb-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--navy), var(--gold)); }
+  .result-mention {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .mention-excellent { background: #eaf4ef; color: var(--success); }
+  .mention-bien { background: #e8f0fb; color: #1a50a0; }
+  .mention-moyen { background: #fef6e4; color: #8a6200; }
+  .mention-insuffisant { background: #faeaea; color: var(--error); }
+
+  @media(max-width:480px){
+    .result-grid { grid-template-columns: 1fr 1fr; }
+    .header { padding: 2rem 1rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="data:image/webp;base64,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" alt="Logo AICE" style="height:80px; margin-bottom:1rem; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));">
+  <div class="header-label">Recrutement</div>
+  <h1>Test Psychotechnique</h1>
+  <p>Assistant Administratif &amp; Comptable — 14 questions</p>
+</div>
+
+<div class="timer-bar">
+  <span class="timer-icon">⏱</span>
+  <span class="timer-label">Temps restant :</span>
+  <span class="timer-value" id="timer">15:00</span>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <span class="progress-text" id="progress-text">0 / 14 répondues</span>
+</div>
+
+<div class="main" id="quiz-main">
+
+  <!-- SECTION 1 -->
+  <div class="section-header">
+    <span class="section-tag">Séries numériques</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-card" data-q="1" data-answer="12">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div class="q-text">Trouvez le nombre manquant dans la suite : <strong>3 — 6 — 9 — ? — 15 — 18</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q1" value="10"><span class="option-dot"></span>10</label>
+      <label class="option-label"><input type="radio" name="q1" value="11"><span class="option-dot"></span>11</label>
+      <label class="option-label"><input type="radio" name="q1" value="12"><span class="option-dot"></span>12</label>
+      <label class="option-label"><input type="radio" name="q1" value="13"><span class="option-dot"></span>13</label>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-card" data-q="2" data-answer="8">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div class="q-text">Trouvez le nombre manquant dans la suite : <strong>1 — 2 — 4 — ? — 16 — 32</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q2" value="6"><span class="option-dot"></span>6</label>
+      <label class="option-label"><input type="radio" name="q2" value="8"><span class="option-dot"></span>8</label>
+      <label class="option-label"><input type="radio" name="q2" value="12"><span class="option-dot"></span>12</label>
+      <label class="option-label"><input type="radio" name="q2" value="10"><span class="option-dot"></span>10</label>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-card" data-q="3" data-answer="256">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div class="q-text">Trouvez le nombre manquant dans la suite : <strong>1 — 4 — 27 — ? — 3125</strong></div>
+    </div>
+    <div class="q-hint">💡 Aide : chaque terme est un nombre élevé à une puissance particulière (1¹, 2², 3³…)</div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q3" value="64"><span class="option-dot"></span>64</label>
+      <label class="option-label"><input type="radio" name="q3" value="128"><span class="option-dot"></span>128</label>
+      <label class="option-label"><input type="radio" name="q3" value="256"><span class="option-dot"></span>256</label>
+      <label class="option-label"><input type="radio" name="q3" value="512"><span class="option-dot"></span>512</label>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-header">
+    <span class="section-tag">Séries alphabétiques</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-card" data-q="4" data-answer="G">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div class="q-text">Trouvez la lettre manquante : <strong>A — D — ? — J</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q4" value="G"><span class="option-dot"></span>G</label>
+      <label class="option-label"><input type="radio" name="q4" value="E"><span class="option-dot"></span>E</label>
+      <label class="option-label"><input type="radio" name="q4" value="F"><span class="option-dot"></span>F</label>
+      <label class="option-label"><input type="radio" name="q4" value="H"><span class="option-dot"></span>H</label>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-card" data-q="5" data-answer="W">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div class="q-text">Trouvez la lettre manquante : <strong>Z — Y — X — ? — V</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q5" value="T"><span class="option-dot"></span>T</label>
+      <label class="option-label"><input type="radio" name="q5" value="U"><span class="option-dot"></span>U</label>
+      <label class="option-label"><input type="radio" name="q5" value="X"><span class="option-dot"></span>X</label>
+      <label class="option-label"><input type="radio" name="q5" value="W"><span class="option-dot"></span>W</label>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section-header">
+    <span class="section-tag">Calcul mental</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-card" data-q="6" data-answer="56">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div class="q-text">Calculez : <strong>7 × 8 = ?</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q6" value="48"><span class="option-dot"></span>48</label>
+      <label class="option-label"><input type="radio" name="q6" value="56"><span class="option-dot"></span>56</label>
+      <label class="option-label"><input type="radio" name="q6" value="54"><span class="option-dot"></span>54</label>
+      <label class="option-label"><input type="radio" name="q6" value="63"><span class="option-dot"></span>63</label>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question-card" data-q="7" data-answer="84">
+    <div class="q-header">
+      <div class="q-num">7</div>
+      <div class="q-text">Calculez : <strong>12 × 7 = ?</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q7" value="74"><span class="option-dot"></span>74</label>
+      <label class="option-label"><input type="radio" name="q7" value="78"><span class="option-dot"></span>78</label>
+      <label class="option-label"><input type="radio" name="q7" value="82"><span class="option-dot"></span>82</label>
+      <label class="option-label"><input type="radio" name="q7" value="84"><span class="option-dot"></span>84</label>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question-card" data-q="8" data-answer="15">
+    <div class="q-header">
+      <div class="q-num">8</div>
+      <div class="q-text">Calculez (attention à l'ordre des opérations) : <strong>25 − 5 × 2 = ?</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q8" value="15"><span class="option-dot"></span>15</label>
+      <label class="option-label"><input type="radio" name="q8" value="10"><span class="option-dot"></span>10</label>
+      <label class="option-label"><input type="radio" name="q8" value="20"><span class="option-dot"></span>20</label>
+      <label class="option-label"><input type="radio" name="q8" value="40"><span class="option-dot"></span>40</label>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section-header">
+    <span class="section-tag">Algèbre</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question-card" data-q="9" data-answer="5">
+    <div class="q-header">
+      <div class="q-num">9</div>
+      <div class="q-text">Résolvez : <strong>x + 5 = 10</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q9" value="3"><span class="option-dot"></span>x = 3</label>
+      <label class="option-label"><input type="radio" name="q9" value="7"><span class="option-dot"></span>x = 7</label>
+      <label class="option-label"><input type="radio" name="q9" value="5"><span class="option-dot"></span>x = 5</label>
+      <label class="option-label"><input type="radio" name="q9" value="15"><span class="option-dot"></span>x = 15</label>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" data-q="10" data-answer="15">
+    <div class="q-header">
+      <div class="q-num">10</div>
+      <div class="q-text">Résolvez : <strong>2x − 10 = x + 5</strong></div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q10" value="5"><span class="option-dot"></span>x = 5</label>
+      <label class="option-label"><input type="radio" name="q10" value="15"><span class="option-dot"></span>x = 15</label>
+      <label class="option-label"><input type="radio" name="q10" value="10"><span class="option-dot"></span>x = 10</label>
+      <label class="option-label"><input type="radio" name="q10" value="20"><span class="option-dot"></span>x = 20</label>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section-header">
+    <span class="section-tag">Problème logique</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-card" data-q="11" data-answer="21">
+    <div class="q-header">
+      <div class="q-num">11</div>
+      <div class="q-text">Lors du Marathon de Paris, un coureur commence à <strong>10h00</strong> et franchit la ligne à <strong>12h00</strong>. La distance d'un marathon est de <strong>42 km</strong>. Quelle est sa vitesse moyenne ?</div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q11" value="18"><span class="option-dot"></span>18 km/h</label>
+      <label class="option-label"><input type="radio" name="q11" value="24"><span class="option-dot"></span>24 km/h</label>
+      <label class="option-label"><input type="radio" name="q11" value="42"><span class="option-dot"></span>42 km/h</label>
+      <label class="option-label"><input type="radio" name="q11" value="21"><span class="option-dot"></span>21 km/h</label>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-card" data-q="12" data-answer="50">
+    <div class="q-header">
+      <div class="q-num">12</div>
+      <div class="q-text">On lance un dé à 6 faces (non truqué, numéroté de 1 à 6). Quelle est la probabilité de tomber sur un <strong>nombre pair</strong> ?</div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q12" value="50"><span class="option-dot"></span>50 %</label>
+      <label class="option-label"><input type="radio" name="q12" value="25"><span class="option-dot"></span>25 %</label>
+      <label class="option-label"><input type="radio" name="q12" value="33"><span class="option-dot"></span>33 %</label>
+      <label class="option-label"><input type="radio" name="q12" value="75"><span class="option-dot"></span>75 %</label>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section-header">
+    <span class="section-tag">Aptitude verbale</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-card" data-q="13" data-answer="HCOLUE">
+    <div class="q-header">
+      <div class="q-num">13</div>
+      <div class="q-text">Les mots suivants sont des anagrammes. L'un d'eux n'est <strong>pas un fruit</strong> — lequel ?</div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q13" value="SRFAIE"><span class="option-dot"></span>SRFAIE</label>
+      <label class="option-label"><input type="radio" name="q13" value="HCOLUE"><span class="option-dot"></span>HCOLUE</label>
+      <label class="option-label"><input type="radio" name="q13" value="NRICTO"><span class="option-dot"></span>NRICTO</label>
+      <label class="option-label"><input type="radio" name="q13" value="EOTMTA"><span class="option-dot"></span>EOTMTA</label>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-card" data-q="14" data-answer="costume">
+    <div class="q-header">
+      <div class="q-num">14</div>
+      <div class="q-text">Laquelle de ces définitions ne correspond <strong>pas</strong> au mot « livre » ?</div>
+    </div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q14" value="poids"><span class="option-dot"></span>Unité de poids</label>
+      <label class="option-label"><input type="radio" name="q14" value="monnaie"><span class="option-dot"></span>Unité de monnaie</label>
+      <label class="option-label"><input type="radio" name="q14" value="costume"><span class="option-dot"></span>Un costume</label>
+      <label class="option-label"><input type="radio" name="q14" value="pages"><span class="option-dot"></span>Assemblage de pages en volume</label>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="btn-submit" onclick="submitQuiz()">Valider mes réponses →</button>
+  </div>
+
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="result-badge" id="result-emoji">🎯</div>
+  <div class="result-title" id="result-title"></div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="result-mention" id="result-mention"></div>
+  <div class="result-grid">
+    <div class="result-stat">
+      <div class="result-stat-num" id="res-score">—</div>
+      <div class="result-stat-label">Score</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-num" id="res-correct">—</div>
+      <div class="result-stat-label">Bonnes réponses</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-num" id="res-time">—</div>
+      <div class="result-stat-label">Temps utilisé</div>
+    </div>
+  </div>
+  <div class="result-bar-section" id="category-bars"></div>
+</div>
+
+<script>
+const TOTAL_TIME = 15 * 60;
+let timeLeft = TOTAL_TIME;
+let timerInterval;
+let answered = {};
+
+const questions = [
+  {q:1, answer:"12", section:"Séries numériques"},
+  {q:2, answer:"8", section:"Séries numériques"},
+  {q:3, answer:"256", section:"Séries numériques"},
+  {q:4, answer:"G", section:"Séries alphabétiques"},
+  {q:5, answer:"W", section:"Séries alphabétiques"},
+  {q:6, answer:"56", section:"Calcul mental"},
+  {q:7, answer:"84", section:"Calcul mental"},
+  {q:8, answer:"15", section:"Calcul mental"},
+  {q:9, answer:"5", section:"Algèbre"},
+  {q:10, answer:"15", section:"Algèbre"},
+  {q:11, answer:"21", section:"Problème logique"},
+  {q:12, answer:"50", section:"Probabilités"},
+  {q:13, answer:"HCOLUE", section:"Aptitude verbale"},
+  {q:14, answer:"costume", section:"Aptitude verbale"},
+];
+
+function formatTime(s){
+  const m=Math.floor(s/60), sec=s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function startTimer(){
+  const el=document.getElementById('timer');
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    el.textContent = formatTime(timeLeft);
+    if(timeLeft<=300) el.className='timer-value warning';
+    if(timeLeft<=60) el.className='timer-value danger';
+    if(timeLeft<=0){ clearInterval(timerInterval); submitQuiz(); }
+  },1000);
+}
+
+function updateProgress(){
+  const total=14;
+  const done=Object.keys(answered).length;
+  document.getElementById('progress-fill').style.width=(done/total*100)+'%';
+  document.getElementById('progress-text').textContent=`${done} / ${total} répondues`;
+}
+
+document.querySelectorAll('.option-label input[type=radio]').forEach(radio=>{
+  radio.addEventListener('change',()=>{
+    answered[radio.name]=radio.value;
+    updateProgress();
+  });
+});
+
+function submitQuiz(){
+  clearInterval(timerInterval);
+  const usedTime = TOTAL_TIME - timeLeft;
+  const usedMin = Math.floor(usedTime/60), usedSec = usedTime%60;
+
+  let correct=0;
+  const sectionStats={};
+
+  questions.forEach(({q, answer, section})=>{
+    const selected = answered['q'+q];
+    const isCorrect = selected === answer;
+    if(isCorrect) correct++;
+
+    if(!sectionStats[section]) sectionStats[section]={correct:0,total:0};
+    sectionStats[section].total++;
+    if(isCorrect) sectionStats[section].correct++;
+
+    // Highlight answers
+    const card = document.querySelector(`[data-q="${q}"]`);
+    if(!card) return;
+    card.querySelectorAll('.option-label').forEach(lbl=>{
+      const inp=lbl.querySelector('input');
+      lbl.classList.add('disabled');
+      if(inp.value===answer) lbl.classList.add('correct');
+      else if(inp.checked && inp.value!==answer) lbl.classList.add('wrong');
+    });
+  });
+
+  const pct = Math.round(correct/14*100);
+  document.getElementById('quiz-main').style.display='none';
+  const res=document.getElementById('results');
+  res.style.display='block';
+
+  document.getElementById('res-score').textContent=pct+'%';
+  document.getElementById('res-correct').textContent=correct+'/14';
+  document.getElementById('res-time').textContent=`${usedMin}m${String(usedSec).padStart(2,'0')}s`;
+
+  let emoji='', title='', sub='', mentionClass='', mentionText='';
+  if(pct>=80){emoji='🏆';title='Excellent résultat !';sub='Le candidat maîtrise très bien les exercices proposés.';mentionText='Excellent';mentionClass='mention-excellent';}
+  else if(pct>=60){emoji='✅';title='Bon résultat';sub='Le candidat présente un niveau satisfaisant.';mentionText='Bien';mentionClass='mention-bien';}
+  else if(pct>=40){emoji='📊';title='Résultat moyen';sub='Quelques lacunes à approfondir lors de l\'entretien.';mentionText='Moyen';mentionClass='mention-moyen';}
+  else{emoji='⚠️';title='Résultat insuffisant';sub='Le niveau requis pour ce poste n\'est pas atteint.';mentionText='Insuffisant';mentionClass='mention-insuffisant';}
+
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-sub').textContent=sub;
+  const mn=document.getElementById('result-mention');
+  mn.textContent=mentionText;
+  mn.className='result-mention '+mentionClass;
+
+  // Category bars
+  const barsHtml = Object.entries(sectionStats).map(([sec,{correct:c,total:t}])=>{
+    const p=Math.round(c/t*100);
+    return `<div class="rb-label"><span>${sec}</span><span>${c}/${t}</span></div>
+    <div class="rb-bg"><div class="rb-fill" style="width:${p}%"></div></div>`;
+  }).join('');
+  document.getElementById('category-bars').innerHTML=barsHtml;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+startTimer();
+updateProgress();
+</script>
+</body>
+</html>
